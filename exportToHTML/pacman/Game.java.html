@@ -1,0 +1,207 @@
+<html>
+<head>
+<title>Game.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #2aacb8;}
+.s5 { color: #6aab73;}
+.s6 { color: #5f826b; font-style: italic;}
+.s7 { color: #67a37c; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Game.java</font>
+</center></td></tr></table>
+<pre><span class="s0">// Game.java</span>
+<span class="s0">// Simple PacMan implementation</span>
+<span class="s2">package </span><span class="s1">pacman</span><span class="s3">;</span>
+
+<span class="s2">import </span><span class="s1">ch</span><span class="s3">.</span><span class="s1">aplu</span><span class="s3">.</span><span class="s1">jgamegrid</span><span class="s3">.*;</span>
+<span class="s2">import </span><span class="s1">pacman</span><span class="s3">.</span><span class="s1">utility</span><span class="s3">.</span><span class="s1">GameCallback</span><span class="s3">;</span>
+
+<span class="s2">import </span><span class="s1">java</span><span class="s3">.</span><span class="s1">awt</span><span class="s3">.*;</span>
+<span class="s2">import </span><span class="s1">java</span><span class="s3">.</span><span class="s1">util</span><span class="s3">.</span><span class="s1">List</span><span class="s3">;</span>
+<span class="s2">import </span><span class="s1">java</span><span class="s3">.</span><span class="s1">util</span><span class="s3">.</span><span class="s1">Properties</span><span class="s3">;</span>
+
+<span class="s2">public class </span><span class="s1">Game </span><span class="s2">extends </span><span class="s1">GameGrid</span>
+<span class="s3">{</span>
+  <span class="s2">private final static int </span><span class="s1">DEFAULT_HORZ_CELLS </span><span class="s3">= </span><span class="s4">20</span><span class="s3">;</span>
+  <span class="s2">private final static int </span><span class="s1">DEFAULT_VERT_CELLS </span><span class="s3">= </span><span class="s4">11</span><span class="s3">;</span>
+  <span class="s2">private final static int </span><span class="s1">DEFAULT_SIMULATION_PERIOD_MS </span><span class="s3">= </span><span class="s4">300</span><span class="s3">;</span>
+  <span class="s2">private final int </span><span class="s1">nbHorzCells</span><span class="s3">;</span>
+  <span class="s2">private final int </span><span class="s1">nbVertCells</span><span class="s3">;</span>
+  <span class="s2">private </span><span class="s1">GameController gameController</span><span class="s3">;</span>
+  <span class="s2">private </span><span class="s1">GameCallback gameCallback</span><span class="s3">;</span>
+
+  <span class="s2">public </span><span class="s1">Game</span><span class="s3">(</span><span class="s1">GameCallback gameCallback</span><span class="s3">, </span><span class="s1">Properties properties</span><span class="s3">)</span>
+  <span class="s3">{</span>
+    <span class="s0">//Setup game</span>
+    <span class="s2">super</span><span class="s3">(</span><span class="s1">DEFAULT_HORZ_CELLS</span><span class="s3">, </span><span class="s1">DEFAULT_VERT_CELLS</span><span class="s3">, </span><span class="s4">20</span><span class="s3">, </span><span class="s2">false</span><span class="s3">);</span>
+    <span class="s2">this</span><span class="s3">.</span><span class="s1">nbHorzCells </span><span class="s3">= </span><span class="s1">DEFAULT_HORZ_CELLS</span><span class="s3">;</span>
+    <span class="s2">this</span><span class="s3">.</span><span class="s1">nbVertCells </span><span class="s3">= </span><span class="s1">DEFAULT_VERT_CELLS</span><span class="s3">;</span>
+    <span class="s2">this</span><span class="s3">.</span><span class="s1">gameCallback </span><span class="s3">= </span><span class="s1">gameCallback</span><span class="s3">;</span>
+    <span class="s1">gameController </span><span class="s3">= </span><span class="s2">new </span><span class="s1">GameController</span><span class="s3">(</span><span class="s1">nbHorzCells</span><span class="s3">, </span><span class="s1">nbVertCells</span><span class="s3">, </span><span class="s1">properties</span><span class="s3">, </span><span class="s1">gameCallback</span><span class="s3">);</span>
+    <span class="s1">setSimulationPeriod</span><span class="s3">(</span><span class="s1">resolveSimulationPeriod</span><span class="s3">(</span><span class="s1">properties</span><span class="s3">));</span>
+    <span class="s1">setTitle</span><span class="s3">(</span><span class="s5">&quot;[PacMan in the Multiverse]&quot;</span><span class="s3">);</span>
+
+    <span class="s1">GGBackground bg </span><span class="s3">= </span><span class="s1">getBg</span><span class="s3">();</span>
+    <span class="s1">drawGrid</span><span class="s3">(</span><span class="s1">bg</span><span class="s3">);</span>
+
+    <span class="s1">addKeyRepeatListener</span><span class="s3">(</span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">getPacActor</span><span class="s3">().</span><span class="s1">getPacmanController</span><span class="s3">());</span>
+    <span class="s1">setKeyRepeatPeriod</span><span class="s3">(</span><span class="s4">150</span><span class="s3">);</span>
+    <span class="s1">setupActorLocations</span><span class="s3">();</span>
+  <span class="s3">}</span>
+
+  <span class="s2">public </span><span class="s1">GameCallback getGameCallback</span><span class="s3">() {</span>
+    <span class="s2">return </span><span class="s1">gameCallback</span><span class="s3">;</span>
+  <span class="s3">}</span>
+
+  <span class="s6">/**</span>
+   <span class="s6">* GameGrid's own act() fires once per simulation frame - a single,</span>
+   <span class="s6">* well-defined place to advance the tick counter that every actor's log</span>
+   <span class="s6">* line reads from, rather than each actor incrementing (and racing on)</span>
+   <span class="s6">* its own. Every actor now acts on every frame (no per-actor</span>
+   <span class="s6">* setSlowDown()), so one tick = one move for PacMan and every monster;</span>
+   <span class="s6">* pacing is controlled purely via the simulation period instead.</span>
+   <span class="s6">*/</span>
+  <span class="s1">@Override</span>
+  <span class="s2">public void </span><span class="s1">act</span><span class="s3">() {</span>
+    <span class="s2">super</span><span class="s3">.</span><span class="s1">act</span><span class="s3">();</span>
+    <span class="s1">gameController</span><span class="s3">.</span><span class="s1">incrementTick</span><span class="s3">();</span>
+    <span class="s1">updateTitle</span><span class="s3">();</span>
+  <span class="s3">}</span>
+
+  <span class="s2">private void </span><span class="s1">updateTitle</span><span class="s3">() {</span>
+    <span class="s1">setTitle</span><span class="s3">(</span><span class="s5">&quot;[PacMan in the Multiverse] Tick: &quot; </span><span class="s3">+ </span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">getCurrentTick</span><span class="s3">()</span>
+            <span class="s3">+ </span><span class="s5">&quot; Score: &quot; </span><span class="s3">+ </span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">getPacActor</span><span class="s3">().</span><span class="s1">getScore</span><span class="s3">());</span>
+  <span class="s3">}</span>
+
+  <span class="s6">/**</span>
+   <span class="s6">* How many milliseconds elapse per simulation frame - i.e. per tick,</span>
+   <span class="s6">* and (since every actor now acts every frame) per move. JGameGrid's</span>
+   <span class="s6">* own setSimulationPeriod(). Configurable via the {</span><span class="s7">@code</span>
+   <span class="s6">* Simulation.period} property so automated tests can run the same</span>
+   <span class="s6">* deterministic move scripts much faster than real gameplay speed</span>
+   <span class="s6">* without changing tick counts, move logic, or any other behaviour -</span>
+   <span class="s6">* only wall-clock speed changes. Defaults to 300ms when absent, which</span>
+   <span class="s6">* matches the original per-move pacing from when PacMan/monsters used</span>
+   <span class="s6">* setSlowDown(3) at a 100ms simulation period (3 x 100ms = 300ms).</span>
+   <span class="s6">*/</span>
+  <span class="s2">private static int </span><span class="s1">resolveSimulationPeriod</span><span class="s3">(</span><span class="s1">Properties properties</span><span class="s3">) {</span>
+    <span class="s1">String period </span><span class="s3">= </span><span class="s1">properties</span><span class="s3">.</span><span class="s1">getProperty</span><span class="s3">(</span><span class="s5">&quot;Simulation.period&quot;</span><span class="s3">);</span>
+    <span class="s2">if </span><span class="s3">(</span><span class="s1">period </span><span class="s3">== </span><span class="s2">null </span><span class="s3">|| </span><span class="s1">period</span><span class="s3">.</span><span class="s1">isEmpty</span><span class="s3">()) {</span>
+      <span class="s2">return </span><span class="s1">DEFAULT_SIMULATION_PERIOD_MS</span><span class="s3">;</span>
+    <span class="s3">}</span>
+    <span class="s2">return </span><span class="s1">Integer</span><span class="s3">.</span><span class="s1">parseInt</span><span class="s3">(</span><span class="s1">period</span><span class="s3">.</span><span class="s1">trim</span><span class="s3">());</span>
+  <span class="s3">}</span>
+
+  <span class="s6">/**</span>
+   <span class="s6">* Run the game to completion (win/loss) and return the full event log,</span>
+   <span class="s6">* so this can be driven by a properties-in / logResult-out JUnit test.</span>
+   <span class="s6">*/</span>
+  <span class="s2">public </span><span class="s1">String runApp</span><span class="s3">() {</span>
+    <span class="s0">//Run the game</span>
+    <span class="s1">doRun</span><span class="s3">();</span>
+    <span class="s1">show</span><span class="s3">();</span>
+    <span class="s1">gameController</span><span class="s3">.</span><span class="s1">setupPillAndItemsLocations</span><span class="s3">();</span>
+
+    <span class="s2">do </span><span class="s3">{</span>
+      <span class="s1">gameController</span><span class="s3">.</span><span class="s1">checkEndGame</span><span class="s3">();</span>
+
+      <span class="s1">delay</span><span class="s3">(</span><span class="s4">10</span><span class="s3">);</span>
+    <span class="s3">} </span><span class="s2">while</span><span class="s3">(!</span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">hasEndGame</span><span class="s3">());</span>
+    <span class="s1">delay</span><span class="s3">(</span><span class="s4">120</span><span class="s3">);</span>
+
+    <span class="s1">Location loc </span><span class="s3">= </span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">getPacActor</span><span class="s3">().</span><span class="s1">getLocation</span><span class="s3">();</span>
+    <span class="s1">gameController</span><span class="s3">.</span><span class="s1">stopMonsters</span><span class="s3">();</span>
+    <span class="s1">gameController</span><span class="s3">.</span><span class="s1">getPacActor</span><span class="s3">().</span><span class="s1">removeSelf</span><span class="s3">();</span>
+
+    <span class="s1">String title </span><span class="s3">= </span><span class="s5">&quot;&quot;</span><span class="s3">;</span>
+    <span class="s2">if </span><span class="s3">(</span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">isHasPacmanBeenHit</span><span class="s3">()) {</span>
+      <span class="s1">getBg</span><span class="s3">().</span><span class="s1">setPaintColor</span><span class="s3">(</span><span class="s1">Color</span><span class="s3">.</span><span class="s1">red</span><span class="s3">);</span>
+      <span class="s1">title </span><span class="s3">= </span><span class="s5">&quot;GAME OVER&quot;</span><span class="s3">;</span>
+      <span class="s1">addActor</span><span class="s3">(</span><span class="s2">new </span><span class="s1">Actor</span><span class="s3">(</span><span class="s5">&quot;sprites/explosion3.gif&quot;</span><span class="s3">), </span><span class="s1">loc</span><span class="s3">);</span>
+    <span class="s3">} </span><span class="s2">else if </span><span class="s3">(</span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">isHasPacmanEatAllPills</span><span class="s3">()) {</span>
+      <span class="s1">getBg</span><span class="s3">().</span><span class="s1">setPaintColor</span><span class="s3">(</span><span class="s1">Color</span><span class="s3">.</span><span class="s1">yellow</span><span class="s3">);</span>
+      <span class="s1">title </span><span class="s3">= </span><span class="s5">&quot;YOU WIN&quot;</span><span class="s3">;</span>
+    <span class="s3">}</span>
+    <span class="s1">setTitle</span><span class="s3">(</span><span class="s1">title</span><span class="s3">);</span>
+    <span class="s1">gameCallback</span><span class="s3">.</span><span class="s1">endOfGame</span><span class="s3">(</span><span class="s1">title</span><span class="s3">);</span>
+
+    <span class="s1">doPause</span><span class="s3">();</span>
+
+    <span class="s2">return </span><span class="s1">gameCallback</span><span class="s3">.</span><span class="s1">getAllLog</span><span class="s3">();</span>
+  <span class="s3">}</span>
+
+  <span class="s2">private void </span><span class="s1">setupActorLocations</span><span class="s3">() {</span>
+    <span class="s1">List</span><span class="s3">&lt;</span><span class="s1">ActorLocation</span><span class="s3">&gt; </span><span class="s1">actorLocations </span><span class="s3">= </span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">getActorLocations</span><span class="s3">();</span>
+    <span class="s2">for </span><span class="s3">(</span><span class="s1">ActorLocation actorLocation</span><span class="s3">: </span><span class="s1">actorLocations</span><span class="s3">) {</span>
+      <span class="s1">addActor</span><span class="s3">(</span><span class="s1">actorLocation</span><span class="s3">.</span><span class="s1">getActor</span><span class="s3">(), </span><span class="s1">actorLocation</span><span class="s3">.</span><span class="s1">getLocation</span><span class="s3">(), </span><span class="s1">actorLocation</span><span class="s3">.</span><span class="s1">getDirection</span><span class="s3">());</span>
+    <span class="s3">}</span>
+  <span class="s3">}</span>
+
+  <span class="s2">private void </span><span class="s1">drawGrid</span><span class="s3">(</span><span class="s1">GGBackground bg</span><span class="s3">)</span>
+  <span class="s3">{</span>
+    <span class="s1">bg</span><span class="s3">.</span><span class="s1">clear</span><span class="s3">(</span><span class="s1">Color</span><span class="s3">.</span><span class="s1">gray</span><span class="s3">);</span>
+    <span class="s1">bg</span><span class="s3">.</span><span class="s1">setPaintColor</span><span class="s3">(</span><span class="s1">Color</span><span class="s3">.</span><span class="s1">white</span><span class="s3">);</span>
+    <span class="s2">for </span><span class="s3">(</span><span class="s2">int </span><span class="s1">y </span><span class="s3">= </span><span class="s4">0</span><span class="s3">; </span><span class="s1">y </span><span class="s3">&lt; </span><span class="s1">nbVertCells</span><span class="s3">; </span><span class="s1">y</span><span class="s3">++)</span>
+    <span class="s3">{</span>
+      <span class="s2">for </span><span class="s3">(</span><span class="s2">int </span><span class="s1">x </span><span class="s3">= </span><span class="s4">0</span><span class="s3">; </span><span class="s1">x </span><span class="s3">&lt; </span><span class="s1">nbHorzCells</span><span class="s3">; </span><span class="s1">x</span><span class="s3">++)</span>
+      <span class="s3">{</span>
+        <span class="s1">bg</span><span class="s3">.</span><span class="s1">setPaintColor</span><span class="s3">(</span><span class="s1">Color</span><span class="s3">.</span><span class="s1">white</span><span class="s3">);</span>
+        <span class="s1">Location location </span><span class="s3">= </span><span class="s2">new </span><span class="s1">Location</span><span class="s3">(</span><span class="s1">x</span><span class="s3">, </span><span class="s1">y</span><span class="s3">);</span>
+        <span class="s2">boolean </span><span class="s1">isNormal </span><span class="s3">= </span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">isNormal</span><span class="s3">(</span><span class="s1">location</span><span class="s3">);</span>
+        <span class="s2">boolean </span><span class="s1">isPill </span><span class="s3">= </span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">isPill</span><span class="s3">(</span><span class="s1">location</span><span class="s3">);</span>
+        <span class="s2">boolean </span><span class="s1">isGold </span><span class="s3">= </span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">isGold</span><span class="s3">(</span><span class="s1">location</span><span class="s3">);</span>
+        <span class="s2">boolean </span><span class="s1">isIce </span><span class="s3">= </span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">isIce</span><span class="s3">(</span><span class="s1">location</span><span class="s3">);</span>
+        <span class="s2">if </span><span class="s3">(</span><span class="s1">isNormal</span><span class="s3">)</span>
+          <span class="s1">bg</span><span class="s3">.</span><span class="s1">fillCell</span><span class="s3">(</span><span class="s1">location</span><span class="s3">, </span><span class="s1">Color</span><span class="s3">.</span><span class="s1">lightGray</span><span class="s3">);</span>
+        <span class="s2">if </span><span class="s3">(</span><span class="s1">isPill</span><span class="s3">)</span>
+          <span class="s1">putPill</span><span class="s3">(</span><span class="s1">bg</span><span class="s3">, </span><span class="s1">location</span><span class="s3">);</span>
+        <span class="s2">if </span><span class="s3">(</span><span class="s1">isGold</span><span class="s3">)</span>
+          <span class="s1">putGold</span><span class="s3">(</span><span class="s1">bg</span><span class="s3">, </span><span class="s1">location</span><span class="s3">);</span>
+        <span class="s2">if </span><span class="s3">(</span><span class="s1">isIce</span><span class="s3">)</span>
+          <span class="s1">putIce</span><span class="s3">(</span><span class="s1">bg</span><span class="s3">, </span><span class="s1">location</span><span class="s3">);</span>
+      <span class="s3">}</span>
+    <span class="s3">}</span>
+
+    <span class="s2">for </span><span class="s3">(</span><span class="s1">Location location </span><span class="s3">: </span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">getPropertyPillLocations</span><span class="s3">()) {</span>
+      <span class="s1">putPill</span><span class="s3">(</span><span class="s1">bg</span><span class="s3">, </span><span class="s1">location</span><span class="s3">);</span>
+    <span class="s3">}</span>
+
+    <span class="s2">for </span><span class="s3">(</span><span class="s1">Location location </span><span class="s3">: </span><span class="s1">gameController</span><span class="s3">.</span><span class="s1">getPropertyGoldLocations</span><span class="s3">()) {</span>
+      <span class="s1">putGold</span><span class="s3">(</span><span class="s1">bg</span><span class="s3">, </span><span class="s1">location</span><span class="s3">);</span>
+    <span class="s3">}</span>
+  <span class="s3">}</span>
+
+  <span class="s2">private void </span><span class="s1">putPill</span><span class="s3">(</span><span class="s1">GGBackground bg</span><span class="s3">, </span><span class="s1">Location location</span><span class="s3">){</span>
+    <span class="s1">bg</span><span class="s3">.</span><span class="s1">fillCircle</span><span class="s3">(</span><span class="s1">toPoint</span><span class="s3">(</span><span class="s1">location</span><span class="s3">), </span><span class="s4">5</span><span class="s3">);</span>
+  <span class="s3">}</span>
+
+  <span class="s2">private void </span><span class="s1">putGold</span><span class="s3">(</span><span class="s1">GGBackground bg</span><span class="s3">, </span><span class="s1">Location location</span><span class="s3">){</span>
+    <span class="s1">bg</span><span class="s3">.</span><span class="s1">setPaintColor</span><span class="s3">(</span><span class="s1">Color</span><span class="s3">.</span><span class="s1">yellow</span><span class="s3">);</span>
+    <span class="s1">bg</span><span class="s3">.</span><span class="s1">fillCircle</span><span class="s3">(</span><span class="s1">toPoint</span><span class="s3">(</span><span class="s1">location</span><span class="s3">), </span><span class="s4">5</span><span class="s3">);</span>
+    <span class="s1">Actor gold </span><span class="s3">= </span><span class="s2">new </span><span class="s1">Actor</span><span class="s3">(</span><span class="s5">&quot;sprites/gold.png&quot;</span><span class="s3">);</span>
+    <span class="s1">gameController</span><span class="s3">.</span><span class="s1">putGold</span><span class="s3">(</span><span class="s1">gold</span><span class="s3">);</span>
+    <span class="s1">addActor</span><span class="s3">(</span><span class="s1">gold</span><span class="s3">, </span><span class="s1">location</span><span class="s3">);</span>
+  <span class="s3">}</span>
+
+  <span class="s2">private void </span><span class="s1">putIce</span><span class="s3">(</span><span class="s1">GGBackground bg</span><span class="s3">, </span><span class="s1">Location location</span><span class="s3">){</span>
+    <span class="s1">bg</span><span class="s3">.</span><span class="s1">setPaintColor</span><span class="s3">(</span><span class="s1">Color</span><span class="s3">.</span><span class="s1">blue</span><span class="s3">);</span>
+    <span class="s1">bg</span><span class="s3">.</span><span class="s1">fillCircle</span><span class="s3">(</span><span class="s1">toPoint</span><span class="s3">(</span><span class="s1">location</span><span class="s3">), </span><span class="s4">5</span><span class="s3">);</span>
+    <span class="s1">Actor ice </span><span class="s3">= </span><span class="s2">new </span><span class="s1">Actor</span><span class="s3">(</span><span class="s5">&quot;sprites/ice.png&quot;</span><span class="s3">);</span>
+    <span class="s1">gameController</span><span class="s3">.</span><span class="s1">putIce</span><span class="s3">(</span><span class="s1">ice</span><span class="s3">);</span>
+    <span class="s1">addActor</span><span class="s3">(</span><span class="s1">ice</span><span class="s3">, </span><span class="s1">location</span><span class="s3">);</span>
+  <span class="s3">}</span>
+
+<span class="s3">}</span>
+</pre>
+</body>
+</html>

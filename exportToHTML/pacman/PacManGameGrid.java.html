@@ -1,0 +1,97 @@
+<html>
+<head>
+<title>PacManGameGrid.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #7a7e85;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+PacManGameGrid.java</font>
+</center></td></tr></table>
+<pre><span class="s0">// PacManGameGrid.java</span>
+<span class="s2">package </span><span class="s1">pacman</span><span class="s3">;</span>
+
+<span class="s2">import </span><span class="s1">ch</span><span class="s3">.</span><span class="s1">aplu</span><span class="s3">.</span><span class="s1">jgamegrid</span><span class="s3">.*;</span>
+
+<span class="s2">public class </span><span class="s1">PacManGameGrid</span>
+<span class="s3">{</span>
+  <span class="s0">// Every pill/gold/ice item outside column 4 (PacMan's default start</span>
+  <span class="s0">// column, x=4 for the default PacMan.location=4,9) has been cleared to</span>
+  <span class="s0">// empty space, so the default maze only has items in PacMan's own</span>
+  <span class="s0">// column - keeps auto-mode/manual test runs deterministic and easy to</span>
+  <span class="s0">// eyeball without a scripted move list. One of the column-4 pills</span>
+  <span class="s0">// (row 5) is an ice cube and another (row 7) is gold. The gold is</span>
+  <span class="s0">// deliberately NOT at PacMan's exact start cell (row 9) - eatPill</span>
+  <span class="s0">// only fires on arrival, so an item PacMan starts standing on is</span>
+  <span class="s0">// never actually picked up.</span>
+  <span class="s2">private static final </span><span class="s1">String DEFAULT_MAZE </span><span class="s3">=</span>
+    <span class="s4">&quot;xxxxxxxxxxxxxxxxxxxx&quot; </span><span class="s3">+ </span><span class="s0">// 0</span>
+    <span class="s4">&quot;x   .x        x    x&quot; </span><span class="s3">+ </span><span class="s0">// 1</span>
+    <span class="s4">&quot;x xx.x xxxxxx x xx x&quot; </span><span class="s3">+ </span><span class="s0">// 2</span>
+    <span class="s4">&quot;x x .            x x&quot; </span><span class="s3">+ </span><span class="s0">// 3</span>
+    <span class="s4">&quot;x x xx xx  xx xx x x&quot; </span><span class="s3">+ </span><span class="s0">// 4</span>
+    <span class="s4">&quot;x   i  x    x      x&quot; </span><span class="s3">+ </span><span class="s0">// 5</span>
+    <span class="s4">&quot;x x xx xxxxxx xx x x&quot; </span><span class="s3">+ </span><span class="s0">// 6</span>
+    <span class="s4">&quot;x x g            x x&quot; </span><span class="s3">+ </span><span class="s0">// 7</span>
+    <span class="s4">&quot;x xx.x xxxxxx x xx x&quot; </span><span class="s3">+ </span><span class="s0">// 8</span>
+    <span class="s4">&quot;x   .x        x    x&quot; </span><span class="s3">+ </span><span class="s0">// 9</span>
+    <span class="s4">&quot;xxxxxxxxxxxxxxxxxxxx&quot;</span><span class="s3">;</span><span class="s0">// 10</span>
+
+  <span class="s2">private int </span><span class="s1">nbHorzCells</span><span class="s3">;</span>
+  <span class="s2">private int </span><span class="s1">nbVertCells</span><span class="s3">;</span>
+  <span class="s2">private int</span><span class="s3">[][] </span><span class="s1">mazeArray</span><span class="s3">;</span>
+
+  <span class="s2">public </span><span class="s1">PacManGameGrid</span><span class="s3">(</span><span class="s2">int </span><span class="s1">nbHorzCells</span><span class="s3">, </span><span class="s2">int </span><span class="s1">nbVertCells</span><span class="s3">)</span>
+  <span class="s3">{</span>
+    <span class="s2">this</span><span class="s3">.</span><span class="s1">nbHorzCells </span><span class="s3">= </span><span class="s1">nbHorzCells</span><span class="s3">;</span>
+    <span class="s2">this</span><span class="s3">.</span><span class="s1">nbVertCells </span><span class="s3">= </span><span class="s1">nbVertCells</span><span class="s3">;</span>
+    <span class="s1">mazeArray </span><span class="s3">= </span><span class="s2">new int</span><span class="s3">[</span><span class="s1">nbVertCells</span><span class="s3">][</span><span class="s1">nbHorzCells</span><span class="s3">];</span>
+
+    <span class="s0">// Copy structure into integer array</span>
+    <span class="s2">for </span><span class="s3">(</span><span class="s2">int </span><span class="s1">i </span><span class="s3">= </span><span class="s5">0</span><span class="s3">; </span><span class="s1">i </span><span class="s3">&lt; </span><span class="s1">nbVertCells</span><span class="s3">; </span><span class="s1">i</span><span class="s3">++)</span>
+    <span class="s3">{</span>
+      <span class="s2">for </span><span class="s3">(</span><span class="s2">int </span><span class="s1">k </span><span class="s3">= </span><span class="s5">0</span><span class="s3">; </span><span class="s1">k </span><span class="s3">&lt; </span><span class="s1">nbHorzCells</span><span class="s3">; </span><span class="s1">k</span><span class="s3">++) {</span>
+        <span class="s2">int </span><span class="s1">value </span><span class="s3">= </span><span class="s1">toInt</span><span class="s3">(</span><span class="s1">DEFAULT_MAZE</span><span class="s3">.</span><span class="s1">charAt</span><span class="s3">(</span><span class="s1">nbHorzCells </span><span class="s3">* </span><span class="s1">i </span><span class="s3">+ </span><span class="s1">k</span><span class="s3">));</span>
+        <span class="s1">mazeArray</span><span class="s3">[</span><span class="s1">i</span><span class="s3">][</span><span class="s1">k</span><span class="s3">] = </span><span class="s1">value</span><span class="s3">;</span>
+      <span class="s3">}</span>
+    <span class="s3">}</span>
+  <span class="s3">}</span>
+
+  <span class="s2">public int </span><span class="s1">getCell</span><span class="s3">(</span><span class="s1">Location location</span><span class="s3">)</span>
+  <span class="s3">{</span>
+    <span class="s2">if </span><span class="s3">(</span><span class="s1">mazeArray</span><span class="s3">.</span><span class="s1">length </span><span class="s3">&lt;= </span><span class="s1">location</span><span class="s3">.</span><span class="s1">y </span><span class="s3">|| </span><span class="s1">location</span><span class="s3">.</span><span class="s1">y </span><span class="s3">&lt;= </span><span class="s5">0</span><span class="s3">) {</span>
+      <span class="s2">return </span><span class="s3">-</span><span class="s5">1</span><span class="s3">;</span>
+    <span class="s3">}</span>
+    <span class="s2">if </span><span class="s3">(</span><span class="s1">mazeArray</span><span class="s3">[</span><span class="s1">location</span><span class="s3">.</span><span class="s1">y</span><span class="s3">].</span><span class="s1">length </span><span class="s3">&lt;= </span><span class="s1">location</span><span class="s3">.</span><span class="s1">x </span><span class="s3">|| </span><span class="s1">location</span><span class="s3">.</span><span class="s1">x </span><span class="s3">&lt;= </span><span class="s5">0</span><span class="s3">) {</span>
+      <span class="s2">return </span><span class="s3">-</span><span class="s5">1</span><span class="s3">;</span>
+    <span class="s3">}</span>
+
+    <span class="s2">return </span><span class="s1">mazeArray</span><span class="s3">[</span><span class="s1">location</span><span class="s3">.</span><span class="s1">y</span><span class="s3">][</span><span class="s1">location</span><span class="s3">.</span><span class="s1">x</span><span class="s3">];</span>
+  <span class="s3">}</span>
+  <span class="s2">private int </span><span class="s1">toInt</span><span class="s3">(</span><span class="s2">char </span><span class="s1">c</span><span class="s3">)</span>
+  <span class="s3">{</span>
+    <span class="s2">if </span><span class="s3">(</span><span class="s1">c </span><span class="s3">== </span><span class="s4">'x'</span><span class="s3">)</span>
+      <span class="s2">return </span><span class="s5">0</span><span class="s3">;</span>
+    <span class="s2">if </span><span class="s3">(</span><span class="s1">c </span><span class="s3">== </span><span class="s4">'.'</span><span class="s3">)</span>
+      <span class="s2">return </span><span class="s5">1</span><span class="s3">;</span>
+    <span class="s2">if </span><span class="s3">(</span><span class="s1">c </span><span class="s3">== </span><span class="s4">' '</span><span class="s3">)</span>
+      <span class="s2">return </span><span class="s5">2</span><span class="s3">;</span>
+    <span class="s2">if </span><span class="s3">(</span><span class="s1">c </span><span class="s3">== </span><span class="s4">'g'</span><span class="s3">)</span>
+      <span class="s2">return </span><span class="s5">3</span><span class="s3">;</span>
+    <span class="s2">if </span><span class="s3">(</span><span class="s1">c </span><span class="s3">== </span><span class="s4">'i'</span><span class="s3">)</span>
+      <span class="s2">return </span><span class="s5">4</span><span class="s3">;</span>
+    <span class="s2">return </span><span class="s3">-</span><span class="s5">1</span><span class="s3">;</span>
+  <span class="s3">}</span>
+<span class="s3">}</span>
+</pre>
+</body>
+</html>

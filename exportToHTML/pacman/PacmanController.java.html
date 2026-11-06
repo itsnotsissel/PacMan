@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>PacmanController.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+PacmanController.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">pacman</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">ch</span><span class="s2">.</span><span class="s1">aplu</span><span class="s2">.</span><span class="s1">jgamegrid</span><span class="s2">.</span><span class="s1">GGKeyRepeatListener</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ch</span><span class="s2">.</span><span class="s1">aplu</span><span class="s2">.</span><span class="s1">jgamegrid</span><span class="s2">.</span><span class="s1">Location</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">KeyEvent</span><span class="s2">;</span>
+
+<span class="s0">class </span><span class="s1">PacmanController </span><span class="s0">implements </span><span class="s1">GGKeyRepeatListener </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">PacActor pacActor</span><span class="s2">;</span>
+    <span class="s0">public </span><span class="s1">PacmanController</span><span class="s2">(</span><span class="s1">PacActor pacActor</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">pacActor </span><span class="s2">= </span><span class="s1">pacActor</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">keyRepeated</span><span class="s2">(</span><span class="s0">int </span><span class="s1">keyCode</span><span class="s2">)</span>
+    <span class="s2">{</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">pacActor</span><span class="s2">.</span><span class="s1">isAuto</span><span class="s2">()) {</span>
+            <span class="s0">return</span><span class="s2">;</span>
+        <span class="s2">}</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">pacActor</span><span class="s2">.</span><span class="s1">isRemoved</span><span class="s2">())  </span><span class="s3">// Already removed</span>
+            <span class="s0">return</span><span class="s2">;</span>
+        <span class="s1">Location next </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+        <span class="s0">switch </span><span class="s2">(</span><span class="s1">keyCode</span><span class="s2">)</span>
+        <span class="s2">{</span>
+            <span class="s0">case </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_LEFT</span><span class="s2">:</span>
+                <span class="s1">next </span><span class="s2">= </span><span class="s1">pacActor</span><span class="s2">.</span><span class="s1">getLocation</span><span class="s2">().</span><span class="s1">getNeighbourLocation</span><span class="s2">(</span><span class="s1">Location</span><span class="s2">.</span><span class="s1">WEST</span><span class="s2">);</span>
+                <span class="s1">pacActor</span><span class="s2">.</span><span class="s1">setDirection</span><span class="s2">(</span><span class="s1">Location</span><span class="s2">.</span><span class="s1">WEST</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_UP</span><span class="s2">:</span>
+                <span class="s1">next </span><span class="s2">= </span><span class="s1">pacActor</span><span class="s2">.</span><span class="s1">getLocation</span><span class="s2">().</span><span class="s1">getNeighbourLocation</span><span class="s2">(</span><span class="s1">Location</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+                <span class="s1">pacActor</span><span class="s2">.</span><span class="s1">setDirection</span><span class="s2">(</span><span class="s1">Location</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_RIGHT</span><span class="s2">:</span>
+                <span class="s1">next </span><span class="s2">= </span><span class="s1">pacActor</span><span class="s2">.</span><span class="s1">getLocation</span><span class="s2">().</span><span class="s1">getNeighbourLocation</span><span class="s2">(</span><span class="s1">Location</span><span class="s2">.</span><span class="s1">EAST</span><span class="s2">);</span>
+                <span class="s1">pacActor</span><span class="s2">.</span><span class="s1">setDirection</span><span class="s2">(</span><span class="s1">Location</span><span class="s2">.</span><span class="s1">EAST</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_DOWN</span><span class="s2">:</span>
+                <span class="s1">next </span><span class="s2">= </span><span class="s1">pacActor</span><span class="s2">.</span><span class="s1">getLocation</span><span class="s2">().</span><span class="s1">getNeighbourLocation</span><span class="s2">(</span><span class="s1">Location</span><span class="s2">.</span><span class="s1">SOUTH</span><span class="s2">);</span>
+                <span class="s1">pacActor</span><span class="s2">.</span><span class="s1">setDirection</span><span class="s2">(</span><span class="s1">Location</span><span class="s2">.</span><span class="s1">SOUTH</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+        <span class="s2">}</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">next </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; </span><span class="s1">pacActor</span><span class="s2">.</span><span class="s1">canMove</span><span class="s2">(</span><span class="s1">next</span><span class="s2">))</span>
+        <span class="s2">{</span>
+            <span class="s1">pacActor</span><span class="s2">.</span><span class="s1">setLocation</span><span class="s2">(</span><span class="s1">next</span><span class="s2">);</span>
+            <span class="s1">pacActor</span><span class="s2">.</span><span class="s1">eatPill</span><span class="s2">(</span><span class="s1">next</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

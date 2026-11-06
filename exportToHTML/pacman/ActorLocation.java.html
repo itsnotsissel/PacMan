@@ -1,0 +1,47 @@
+<html>
+<head>
+<title>ActorLocation.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+ActorLocation.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">pacman</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">ch</span><span class="s2">.</span><span class="s1">aplu</span><span class="s2">.</span><span class="s1">jgamegrid</span><span class="s2">.</span><span class="s1">Actor</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ch</span><span class="s2">.</span><span class="s1">aplu</span><span class="s2">.</span><span class="s1">jgamegrid</span><span class="s2">.</span><span class="s1">Location</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">ActorLocation </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">Actor actor</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">Location location</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">Location</span><span class="s2">.</span><span class="s1">CompassDirection direction</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">ActorLocation</span><span class="s2">(</span><span class="s1">Actor actor</span><span class="s2">, </span><span class="s1">Location location</span><span class="s2">, </span><span class="s1">Location</span><span class="s2">.</span><span class="s1">CompassDirection direction</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">actor </span><span class="s2">= </span><span class="s1">actor</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">location </span><span class="s2">= </span><span class="s1">location</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">direction </span><span class="s2">= </span><span class="s1">direction</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">Actor getActor</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">actor</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">Location getLocation</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">location</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">Location</span><span class="s2">.</span><span class="s1">CompassDirection getDirection</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">direction</span><span class="s2">;</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

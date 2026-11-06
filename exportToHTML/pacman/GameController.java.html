@@ -1,0 +1,327 @@
+<html>
+<head>
+<title>GameController.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #7a7e85;}
+.s5 { color: #6aab73;}
+.s6 { color: #5f826b; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+GameController.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">pacman</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">ch</span><span class="s2">.</span><span class="s1">aplu</span><span class="s2">.</span><span class="s1">jgamegrid</span><span class="s2">.</span><span class="s1">Actor</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ch</span><span class="s2">.</span><span class="s1">aplu</span><span class="s2">.</span><span class="s1">jgamegrid</span><span class="s2">.</span><span class="s1">Location</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">pacman</span><span class="s2">.</span><span class="s1">monsters</span><span class="s2">.</span><span class="s1">Monster</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">pacman</span><span class="s2">.</span><span class="s1">utility</span><span class="s2">.</span><span class="s1">GameCallback</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">List</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">ArrayList</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Properties</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">GameController </span><span class="s2">{</span>
+    <span class="s0">private int </span><span class="s1">nbHorzCells </span><span class="s2">= </span><span class="s3">20</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">nbVertCells </span><span class="s2">= </span><span class="s3">11</span><span class="s2">;</span>
+    <span class="s0">protected </span><span class="s1">PacManGameGrid grid</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Location</span><span class="s2">&gt; </span><span class="s1">pillAndItemLocations </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Location</span><span class="s2">&gt;();</span>
+    <span class="s0">private </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Actor</span><span class="s2">&gt; </span><span class="s1">iceCubes </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Actor</span><span class="s2">&gt;();</span>
+    <span class="s0">private </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Actor</span><span class="s2">&gt; </span><span class="s1">goldPieces </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Actor</span><span class="s2">&gt;();</span>
+
+    <span class="s0">private boolean </span><span class="s1">hasPacmanBeenHit </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+    <span class="s0">private boolean </span><span class="s1">hasPacmanEatAllPills </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+    <span class="s0">private </span><span class="s1">Properties properties</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">seed </span><span class="s2">= </span><span class="s3">30006</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">currentTick </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Location</span><span class="s2">&gt; </span><span class="s1">propertyPillLocations </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+    <span class="s0">private </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Location</span><span class="s2">&gt; </span><span class="s1">propertyGoldLocations </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+
+    <span class="s0">protected </span><span class="s1">PacActor pacActor</span><span class="s2">;</span>
+
+    <span class="s0">private </span><span class="s1">GameCallback gameCallback</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Monster</span><span class="s2">&gt; </span><span class="s1">monsters </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+    <span class="s0">private </span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">ActorLocation</span><span class="s2">&gt; </span><span class="s1">monstersLocation </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+
+    <span class="s0">public </span><span class="s1">GameController</span><span class="s2">(</span><span class="s0">int </span><span class="s1">nbHorzCells</span><span class="s2">, </span><span class="s0">int </span><span class="s1">nbVertCells</span><span class="s2">, </span><span class="s1">Properties properties</span><span class="s2">, </span><span class="s1">GameCallback gameCallback</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">properties </span><span class="s2">= </span><span class="s1">properties</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">nbHorzCells </span><span class="s2">= </span><span class="s1">nbHorzCells</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">nbVertCells </span><span class="s2">= </span><span class="s1">nbVertCells</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">grid </span><span class="s2">= </span><span class="s0">new </span><span class="s1">PacManGameGrid</span><span class="s2">(</span><span class="s1">nbHorzCells</span><span class="s2">, </span><span class="s1">nbVertCells</span><span class="s2">);</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">gameCallback </span><span class="s2">= </span><span class="s1">gameCallback</span><span class="s2">;</span>
+
+        <span class="s1">pacActor </span><span class="s2">= </span><span class="s0">new </span><span class="s1">PacActor</span><span class="s2">(</span><span class="s0">this</span><span class="s2">);</span>
+
+        <span class="s4">//Setup for auto test</span>
+        <span class="s1">pacActor</span><span class="s2">.</span><span class="s1">setPropertyMoves</span><span class="s2">(</span><span class="s1">properties</span><span class="s2">.</span><span class="s1">getProperty</span><span class="s2">(</span><span class="s5">&quot;PacMan.move&quot;</span><span class="s2">));</span>
+        <span class="s1">pacActor</span><span class="s2">.</span><span class="s1">setAuto</span><span class="s2">(</span><span class="s1">Boolean</span><span class="s2">.</span><span class="s1">parseBoolean</span><span class="s2">(</span><span class="s1">properties</span><span class="s2">.</span><span class="s1">getProperty</span><span class="s2">(</span><span class="s5">&quot;PacMan.isAuto&quot;</span><span class="s2">)));</span>
+        <span class="s1">loadPillAndItemsLocations</span><span class="s2">();</span>
+
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">monstersLocation </span><span class="s2">= </span><span class="s1">createMonsters</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s1">properties</span><span class="s2">);</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s1">ActorLocation monsterLocation</span><span class="s2">: </span><span class="s0">this</span><span class="s2">.</span><span class="s1">monstersLocation</span><span class="s2">) {</span>
+            <span class="s1">Actor actor </span><span class="s2">= </span><span class="s1">monsterLocation</span><span class="s2">.</span><span class="s1">getActor</span><span class="s2">();</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">actor </span><span class="s0">instanceof </span><span class="s1">Monster</span><span class="s2">) {</span>
+                <span class="s1">Monster monster </span><span class="s2">= (</span><span class="s1">Monster</span><span class="s2">) </span><span class="s1">actor</span><span class="s2">;</span>
+                <span class="s0">this</span><span class="s2">.</span><span class="s1">monsters</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">monster</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s4">//Setup Random seeds - &quot;seed&quot; is optional; when absent, PacMan and</span>
+        <span class="s4">//every monster fall back to their own unseeded (genuinely random)</span>
+        <span class="s4">//Random instance, so gameplay is non-deterministic by default.</span>
+        <span class="s1">String seedProperty </span><span class="s2">= </span><span class="s1">properties</span><span class="s2">.</span><span class="s1">getProperty</span><span class="s2">(</span><span class="s5">&quot;seed&quot;</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">seedProperty </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; !</span><span class="s1">seedProperty</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+            <span class="s1">seed </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">seedProperty</span><span class="s2">);</span>
+            <span class="s1">pacActor</span><span class="s2">.</span><span class="s1">setSeed</span><span class="s2">(</span><span class="s1">seed</span><span class="s2">);</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">Monster monster</span><span class="s2">: </span><span class="s1">monsters</span><span class="s2">) {</span>
+                <span class="s1">monster</span><span class="s2">.</span><span class="s1">setSeed</span><span class="s2">(</span><span class="s1">seed</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">PacActor getPacActor</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">pacActor</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s6">/**</span>
+     <span class="s6">* Advanced once per simulation frame by Game's GameGrid.act() override -</span>
+     <span class="s6">* a single, world-level source of truth for the tick number every log</span>
+     <span class="s6">* line (PacMan, monster, effect) is tagged with.</span>
+     <span class="s6">*/</span>
+    <span class="s0">public void </span><span class="s1">incrementTick</span><span class="s2">() {</span>
+        <span class="s1">currentTick</span><span class="s2">++;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public int </span><span class="s1">getCurrentTick</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">currentTick</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">stopMonsters</span><span class="s2">() {</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s1">Monster monster</span><span class="s2">: </span><span class="s1">monsters</span><span class="s2">) {</span>
+            <span class="s1">monster</span><span class="s2">.</span><span class="s1">setStopMoving</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">isNormal</span><span class="s2">(</span><span class="s1">Location location</span><span class="s2">) {</span>
+        <span class="s0">int </span><span class="s1">a </span><span class="s2">= </span><span class="s1">grid</span><span class="s2">.</span><span class="s1">getCell</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s1">a </span><span class="s2">&gt; </span><span class="s3">0</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">isPill</span><span class="s2">(</span><span class="s1">Location location</span><span class="s2">) {</span>
+        <span class="s0">int </span><span class="s1">a </span><span class="s2">= </span><span class="s1">grid</span><span class="s2">.</span><span class="s1">getCell</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s1">a </span><span class="s2">== </span><span class="s3">1 </span><span class="s2">&amp;&amp; </span><span class="s1">propertyPillLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() == </span><span class="s3">0</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">isGold</span><span class="s2">(</span><span class="s1">Location location</span><span class="s2">) {</span>
+        <span class="s0">int </span><span class="s1">a </span><span class="s2">= </span><span class="s1">grid</span><span class="s2">.</span><span class="s1">getCell</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s1">a </span><span class="s2">== </span><span class="s3">3 </span><span class="s2">&amp;&amp; </span><span class="s1">propertyGoldLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() == </span><span class="s3">0</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">isIce</span><span class="s2">(</span><span class="s1">Location location</span><span class="s2">) {</span>
+        <span class="s0">int </span><span class="s1">a </span><span class="s2">= </span><span class="s1">grid</span><span class="s2">.</span><span class="s1">getCell</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s1">a </span><span class="s2">== </span><span class="s3">4</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">isWall</span><span class="s2">(</span><span class="s1">Location location</span><span class="s2">) {</span>
+        <span class="s0">int </span><span class="s1">a </span><span class="s2">= </span><span class="s1">grid</span><span class="s2">.</span><span class="s1">getCell</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s1">a </span><span class="s2">== </span><span class="s3">0</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">GameCallback getGameCallback</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">gameCallback</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Location</span><span class="s2">&gt; </span><span class="s1">getPropertyGoldLocations</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">propertyGoldLocations</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Location</span><span class="s2">&gt; </span><span class="s1">getPropertyPillLocations</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">propertyPillLocations</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">isHasPacmanBeenHit</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">hasPacmanBeenHit</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">isHasPacmanEatAllPills</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">hasPacmanEatAllPills</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">hasEndGame</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">hasPacmanBeenHit </span><span class="s2">|| </span><span class="s1">hasPacmanEatAllPills</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">checkEndGame</span><span class="s2">() {</span>
+        <span class="s0">int </span><span class="s1">maxPillsAndItems </span><span class="s2">= </span><span class="s1">countPillsAndItems</span><span class="s2">();</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s1">Monster monster</span><span class="s2">: </span><span class="s1">monsters</span><span class="s2">) {</span>
+            <span class="s1">hasPacmanBeenHit </span><span class="s2">= </span><span class="s1">hasPacmanBeenHit </span><span class="s2">|| </span><span class="s1">monster</span><span class="s2">.</span><span class="s1">getLocation</span><span class="s2">().</span><span class="s1">equals</span><span class="s2">(</span><span class="s1">pacActor</span><span class="s2">.</span><span class="s1">getLocation</span><span class="s2">());</span>
+        <span class="s2">}</span>
+        <span class="s1">hasPacmanEatAllPills </span><span class="s2">= </span><span class="s1">pacActor</span><span class="s2">.</span><span class="s1">getNbPills</span><span class="s2">() &gt;= </span><span class="s1">maxPillsAndItems</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+
+    <span class="s6">/**</span>
+    <span class="s6">* Builds every monster described by the properties file - just a single</span>
+    <span class="s6">* Troll on this branch, keyed by &quot;Troll.location&quot;. Returns an empty list</span>
+    <span class="s6">* (not a Monster) when that location is unset/non-positive, matching</span>
+    <span class="s6">* &quot;&lt;= 0&quot; meaning &quot;not placed&quot; everywhere else location properties are</span>
+    <span class="s6">* read.</span>
+    <span class="s6">*/</span>
+    <span class="s0">public </span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">ActorLocation</span><span class="s2">&gt; </span><span class="s1">createMonsters</span><span class="s2">(</span><span class="s1">GameController gameController</span><span class="s2">, </span><span class="s1">Properties properties</span><span class="s2">) {</span>
+        <span class="s1">String</span><span class="s2">[] </span><span class="s1">locations </span><span class="s2">= </span><span class="s1">properties</span><span class="s2">.</span><span class="s1">getProperty</span><span class="s2">(</span><span class="s5">&quot;Troll.location&quot;</span><span class="s2">).</span><span class="s1">split</span><span class="s2">(</span><span class="s5">&quot;,&quot;</span><span class="s2">);</span>
+        <span class="s0">int </span><span class="s1">locationX </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">locations</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+        <span class="s0">int </span><span class="s1">locationY </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">locations</span><span class="s2">[</span><span class="s3">1</span><span class="s2">]);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">locationX </span><span class="s2">&lt;= </span><span class="s3">0 </span><span class="s2">|| </span><span class="s1">locationY </span><span class="s2">&lt;= </span><span class="s3">0</span><span class="s2">) {</span>
+            <span class="s0">return null</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">ActorLocation</span><span class="s2">&gt; </span><span class="s1">actorLocations </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">ActorLocation actorLocation </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ActorLocation</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Monster</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s1">properties</span><span class="s2">), </span>
+            <span class="s0">new </span><span class="s1">Location</span><span class="s2">(</span><span class="s1">locationX</span><span class="s2">, </span><span class="s1">locationY</span><span class="s2">), </span><span class="s1">Location</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">actorLocation </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) {</span>
+            <span class="s1">actorLocations</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">actorLocation</span><span class="s2">);</span>
+        <span class="s2">}</span>
+        <span class="s0">return </span><span class="s1">actorLocations</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private int </span><span class="s1">countPillsAndItems</span><span class="s2">() {</span>
+        <span class="s0">int </span><span class="s1">pillsAndItemsCount </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">y </span><span class="s2">= </span><span class="s3">0</span><span class="s2">; </span><span class="s1">y </span><span class="s2">&lt; </span><span class="s1">nbVertCells</span><span class="s2">; </span><span class="s1">y</span><span class="s2">++)</span>
+        <span class="s2">{</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">x </span><span class="s2">= </span><span class="s3">0</span><span class="s2">; </span><span class="s1">x </span><span class="s2">&lt; </span><span class="s1">nbHorzCells</span><span class="s2">; </span><span class="s1">x</span><span class="s2">++)</span>
+            <span class="s2">{</span>
+                <span class="s1">Location location </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Location</span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">y</span><span class="s2">);</span>
+                <span class="s0">int </span><span class="s1">a </span><span class="s2">= </span><span class="s1">grid</span><span class="s2">.</span><span class="s1">getCell</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">a </span><span class="s2">== </span><span class="s3">1 </span><span class="s2">&amp;&amp; </span><span class="s1">propertyPillLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() == </span><span class="s3">0</span><span class="s2">) { </span><span class="s4">// Pill</span>
+                    <span class="s1">pillsAndItemsCount</span><span class="s2">++;</span>
+                <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">a </span><span class="s2">== </span><span class="s3">3 </span><span class="s2">&amp;&amp; </span><span class="s1">propertyGoldLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() == </span><span class="s3">0</span><span class="s2">) { </span><span class="s4">// Gold</span>
+                    <span class="s1">pillsAndItemsCount</span><span class="s2">++;</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">propertyPillLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() != </span><span class="s3">0</span><span class="s2">) {</span>
+            <span class="s1">pillsAndItemsCount </span><span class="s2">+= </span><span class="s1">propertyPillLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">();</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">propertyGoldLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() != </span><span class="s3">0</span><span class="s2">) {</span>
+            <span class="s1">pillsAndItemsCount </span><span class="s2">+= </span><span class="s1">propertyGoldLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">();</span>
+        <span class="s2">}</span>
+
+        <span class="s0">return </span><span class="s1">pillsAndItemsCount</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Location</span><span class="s2">&gt; </span><span class="s1">getPillAndItemLocations</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">pillAndItemLocations</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+
+    <span class="s0">private void </span><span class="s1">loadPillAndItemsLocations</span><span class="s2">() {</span>
+        <span class="s1">String pillsLocationString </span><span class="s2">= </span><span class="s1">properties</span><span class="s2">.</span><span class="s1">getProperty</span><span class="s2">(</span><span class="s5">&quot;Pills.location&quot;</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">pillsLocationString </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) {</span>
+            <span class="s1">String</span><span class="s2">[] </span><span class="s1">singlePillLocationStrings </span><span class="s2">= </span><span class="s1">pillsLocationString</span><span class="s2">.</span><span class="s1">split</span><span class="s2">(</span><span class="s5">&quot;;&quot;</span><span class="s2">);</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">String singlePillLocationString</span><span class="s2">: </span><span class="s1">singlePillLocationStrings</span><span class="s2">) {</span>
+                <span class="s1">String</span><span class="s2">[] </span><span class="s1">locationStrings </span><span class="s2">= </span><span class="s1">singlePillLocationString</span><span class="s2">.</span><span class="s1">split</span><span class="s2">(</span><span class="s5">&quot;,&quot;</span><span class="s2">);</span>
+                <span class="s1">propertyPillLocations</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Location</span><span class="s2">(</span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">locationStrings</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]), </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">locationStrings</span><span class="s2">[</span><span class="s3">1</span><span class="s2">])));</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s1">String goldLocationString </span><span class="s2">= </span><span class="s1">properties</span><span class="s2">.</span><span class="s1">getProperty</span><span class="s2">(</span><span class="s5">&quot;Gold.location&quot;</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">goldLocationString </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) {</span>
+            <span class="s1">String</span><span class="s2">[] </span><span class="s1">singleGoldLocationStrings </span><span class="s2">= </span><span class="s1">goldLocationString</span><span class="s2">.</span><span class="s1">split</span><span class="s2">(</span><span class="s5">&quot;;&quot;</span><span class="s2">);</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">String singleGoldLocationString</span><span class="s2">: </span><span class="s1">singleGoldLocationStrings</span><span class="s2">) {</span>
+                <span class="s1">String</span><span class="s2">[] </span><span class="s1">locationStrings </span><span class="s2">= </span><span class="s1">singleGoldLocationString</span><span class="s2">.</span><span class="s1">split</span><span class="s2">(</span><span class="s5">&quot;,&quot;</span><span class="s2">);</span>
+                <span class="s1">propertyGoldLocations</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Location</span><span class="s2">(</span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">locationStrings</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]), </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">locationStrings</span><span class="s2">[</span><span class="s3">1</span><span class="s2">])));</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setupPillAndItemsLocations</span><span class="s2">() {</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">y </span><span class="s2">= </span><span class="s3">0</span><span class="s2">; </span><span class="s1">y </span><span class="s2">&lt; </span><span class="s1">nbVertCells</span><span class="s2">; </span><span class="s1">y</span><span class="s2">++)</span>
+        <span class="s2">{</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">x </span><span class="s2">= </span><span class="s3">0</span><span class="s2">; </span><span class="s1">x </span><span class="s2">&lt; </span><span class="s1">nbHorzCells</span><span class="s2">; </span><span class="s1">x</span><span class="s2">++)</span>
+            <span class="s2">{</span>
+                <span class="s1">Location location </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Location</span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">y</span><span class="s2">);</span>
+                <span class="s0">int </span><span class="s1">a </span><span class="s2">= </span><span class="s1">grid</span><span class="s2">.</span><span class="s1">getCell</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">a </span><span class="s2">== </span><span class="s3">1 </span><span class="s2">&amp;&amp; </span><span class="s1">propertyPillLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() == </span><span class="s3">0</span><span class="s2">) {</span>
+                    <span class="s1">pillAndItemLocations</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+                <span class="s2">}</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">a </span><span class="s2">== </span><span class="s3">3 </span><span class="s2">&amp;&amp;  </span><span class="s1">propertyGoldLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() == </span><span class="s3">0</span><span class="s2">) {</span>
+                    <span class="s1">pillAndItemLocations</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+                <span class="s2">}</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">a </span><span class="s2">== </span><span class="s3">4</span><span class="s2">) {</span>
+                    <span class="s1">pillAndItemLocations</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">propertyPillLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() &gt; </span><span class="s3">0</span><span class="s2">) {</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">Location location </span><span class="s2">: </span><span class="s1">propertyPillLocations</span><span class="s2">) {</span>
+                <span class="s1">pillAndItemLocations</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">propertyGoldLocations</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() &gt; </span><span class="s3">0</span><span class="s2">) {</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">Location location </span><span class="s2">: </span><span class="s1">propertyGoldLocations</span><span class="s2">) {</span>
+                <span class="s1">pillAndItemLocations</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">location</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+    <span class="s0">public </span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">ActorLocation</span><span class="s2">&gt; </span><span class="s1">getActorLocations</span><span class="s2">() {</span>
+        <span class="s1">String</span><span class="s2">[] </span><span class="s1">pacManLocations </span><span class="s2">= </span><span class="s0">this</span><span class="s2">.</span><span class="s1">properties</span><span class="s2">.</span><span class="s1">getProperty</span><span class="s2">(</span><span class="s5">&quot;PacMan.location&quot;</span><span class="s2">).</span><span class="s1">split</span><span class="s2">(</span><span class="s5">&quot;,&quot;</span><span class="s2">);</span>
+        <span class="s0">int </span><span class="s1">pacManX </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">pacManLocations</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+        <span class="s0">int </span><span class="s1">pacManY </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">pacManLocations</span><span class="s2">[</span><span class="s3">1</span><span class="s2">]);</span>
+
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">ActorLocation</span><span class="s2">&gt; </span><span class="s1">actorLocations </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">actorLocations</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ActorLocation</span><span class="s2">(</span><span class="s1">pacActor</span><span class="s2">, </span><span class="s0">new </span><span class="s1">Location</span><span class="s2">(</span><span class="s1">pacManX</span><span class="s2">, </span><span class="s1">pacManY</span><span class="s2">), </span><span class="s1">Location</span><span class="s2">.</span><span class="s1">EAST</span><span class="s2">));</span>
+        <span class="s1">actorLocations</span><span class="s2">.</span><span class="s1">addAll</span><span class="s2">(</span><span class="s1">monstersLocation</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s1">actorLocations</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">removeItem</span><span class="s2">(</span><span class="s1">String type</span><span class="s2">, </span><span class="s1">Location location</span><span class="s2">){</span>
+        <span class="s0">if</span><span class="s2">(</span><span class="s1">type</span><span class="s2">.</span><span class="s1">equals</span><span class="s2">(</span><span class="s5">&quot;gold&quot;</span><span class="s2">)){</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">Actor item </span><span class="s2">: </span><span class="s0">this</span><span class="s2">.</span><span class="s1">goldPieces</span><span class="s2">){</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">location</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() == </span><span class="s1">item</span><span class="s2">.</span><span class="s1">getLocation</span><span class="s2">().</span><span class="s1">getX</span><span class="s2">() &amp;&amp; </span><span class="s1">location</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() == </span><span class="s1">item</span><span class="s2">.</span><span class="s1">getLocation</span><span class="s2">().</span><span class="s1">getY</span><span class="s2">()) {</span>
+                    <span class="s1">item</span><span class="s2">.</span><span class="s1">hide</span><span class="s2">();</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span><span class="s0">else if</span><span class="s2">(</span><span class="s1">type</span><span class="s2">.</span><span class="s1">equals</span><span class="s2">(</span><span class="s5">&quot;ice&quot;</span><span class="s2">)){</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">Actor item </span><span class="s2">: </span><span class="s0">this</span><span class="s2">.</span><span class="s1">iceCubes</span><span class="s2">){</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">location</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() == </span><span class="s1">item</span><span class="s2">.</span><span class="s1">getLocation</span><span class="s2">().</span><span class="s1">getX</span><span class="s2">() &amp;&amp; </span><span class="s1">location</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() == </span><span class="s1">item</span><span class="s2">.</span><span class="s1">getLocation</span><span class="s2">().</span><span class="s1">getY</span><span class="s2">()) {</span>
+                    <span class="s1">item</span><span class="s2">.</span><span class="s1">hide</span><span class="s2">();</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Actor</span><span class="s2">&gt; </span><span class="s1">getGoldPieces</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">goldPieces</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">public void </span><span class="s1">putGold</span><span class="s2">(</span><span class="s1">Actor gold</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">goldPieces</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">gold</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">putIce</span><span class="s2">(</span><span class="s1">Actor ice</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">iceCubes</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">ice</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public int </span><span class="s1">getNumHorzCells</span><span class="s2">(){</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">nbHorzCells</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">public int </span><span class="s1">getNumVertCells</span><span class="s2">(){</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">nbVertCells</span><span class="s2">;</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>
